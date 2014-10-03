@@ -1,0 +1,27 @@
+citEntry(entry="article",
+         title = "Detection of significantly differentially methylated regions in targeted bisulfite sequencing data",
+         author = personList(as.person("Katja Hebestreit"),
+                             as.person("Martin Dugas"),
+                             as.person("Hans-Ulrich Klein")),
+         year = 2013,
+         journal = "Bioinformatics",
+         volume = "29",
+         number = "13",
+         pages = "1647-1653",
+         doi = "10.1093/bioinformatics/btt263",
+         url = "http://bioinformatics.oxfordjournals.org/content/29/13/1647.abstract",
+         
+         textVersion = 
+         paste("Katja Hebestreit, Martin Dugas and Hans-Ulrich Klein (2013):", 
+               "Detection of significantly differentially methylated regions in targeted bisulfite sequencing data.",
+               "Bioinformatics 29(13):1647-1653"))
+
+citEntry(entry="article",
+	 title = "Global test and BiSeq are the methods of choice for testing genomic regions for differential methylation in bisulfite sequencing data",
+         author = personList(as.person("Katja Hebestreit"),
+                             as.person("Hans-Ulrich Klein")),
+         journal = "In preparation",
+         year = 2014,
+         textVersion =
+         paste("Hans-Ulrich Klein and Katja Hebestreit (in preparation):",
+               "Global test and BiSeq are the methods of choice for testing genomic regions for differential methylation in bisulfite sequencing data."))
