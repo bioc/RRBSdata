@@ -116,11 +116,6 @@ The \Robject{islands} object is a \Rclass{GRanges-class} object comprising
 all CpG islands that were considered to contain DMRs. Please see
 \Rcode{?islands} for information regarding the columns.
 
-<<>>=
-data(islands)
-head(islands)
-@
-
 The \Robject{diff.meth.cpgs} object is a \Rclass{GRanges-class} object
 comprising all differentially methylated CpG sites:
 
