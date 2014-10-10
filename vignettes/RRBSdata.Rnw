@@ -26,7 +26,7 @@
 
 \title{RRBSdata: An RRBS data set with simulated DMRs.}
 \author{Katja Hebestreit, Hans-Ulrich Klein}
-\date{Juli 20, 2014}
+\date{October 10, 2014}
 
 \maketitle
 

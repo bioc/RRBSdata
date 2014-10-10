@@ -1,8 +1,8 @@
 Package: RRBSdata
 Type: Package
 Title: An RRBS data set with 12 samples and 10,000 simulated DMRs.
-Version: 0.99.0
-Date: 2014-10-08
+Version: 0.99.1
+Date: 2014-10-10
 Author: Katja Hebestreit, Hans-Ulrich Klein
 Maintainer: Katja Hebestreit <katjah@stanford.edu>
 Depends: R (>= 3.1.0), BiSeq
