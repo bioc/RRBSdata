@@ -56,6 +56,8 @@ increased. For instance, a CpG site of coverage 12 with 3 methylated
 reads (and a relative methylation level of 0.25) within a region
 that should get a methylation difference of 0.3, received 4 additional
 methylated reads (because: 0.3x12 = 4).
+
+The scripts to simulate the data can be found under /R.
 }
 \source{
 Schoofs T, Rohde C, Hebestreit K, Klein HU, Goellner S, Schulze I,
