@@ -57,8 +57,8 @@ regions <- sim$regions
 ind.no.dmr <- which(is.na(regions$cpg.no))
 
 for(i in ind.no.dmr){
-    ov.rrbs <- rrbs[which(rowData(rrbs)$cluster.id == regions$cluster.id[i]),]
-    ov.cpg <- rowData(ov.rrbs)
+    ov.rrbs <- rrbs[which(rowRanges(rrbs)$cluster.id == regions$cluster.id[i]),]
+    ov.cpg <- rowRanges(ov.rrbs)
     cpg.no <- length(ov.cpg)
     regions[i]$cpg.no <- cpg.no
     regions[i]$cpg.perc <- cpg.no / width(regions[i])

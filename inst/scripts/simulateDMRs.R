@@ -60,13 +60,13 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
   regions$KStest.clust.dmr <- as.numeric(rep(NA, length=length(regions)))
   regions$KStest.pval.clust.dmr <- as.numeric(rep(NA, length=length(regions)))
 
-  overlap <- findOverlaps(rowData(object), regions)
+  overlap <- findOverlaps(rowRanges(object), regions)
 
-  rowData(object)$cluster.id <- rep(NA, nrow(object))
-  rowData(object)$cluster.id[overlap@queryHits] <- regions$cluster.id[overlap@subjectHits]
+  rowRanges(object)$cluster.id <- rep(NA, nrow(object))
+  rowRanges(object)$cluster.id[overlap@queryHits] <- regions$cluster.id[overlap@subjectHits]
 
   object.regions <- object[overlap@queryHits,]
-  elementMetadata(rowData(object.regions))$cluster.id <-
+  elementMetadata(rowRanges(object.regions))$cluster.id <-
     elementMetadata(regions)$cluster.id[overlap@subjectHits]
 
 
@@ -74,21 +74,21 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
   object.smoothed <- predictMeth(object.regions, h = h, mc.cores = mc.cores)
 
   n.s <- ncol(object.smoothed)
-  rowData(object.smoothed)$perc.samples <-
+  rowRanges(object.smoothed)$perc.samples <-
     apply(methLevel(object.smoothed), 1, function(x){
       sum(!is.na(x)) / n.s
     })
 
   # ind.covered: per CpG: is CpG covered in >= perc.samples of samples?
-  ind.covered <- rowData(object.smoothed)$perc.samples >= perc.samples
+  ind.covered <- rowRanges(object.smoothed)$perc.samples >= perc.samples
 
   # cluster.id.2: regions of CpG sites covered in >= perc.samples in respective region (cluster.id)
   cluster.id.2 <- character(length=nrow(object.smoothed))
   cluster.id.2[!ind.covered] <- NA
 
   # assign cluster.id.2 per CpG site covered in >= perc.samples:
-  for( clus in unique(rowData(object.smoothed)$cluster.id)){
-    ind.clus <- rowData(object.smoothed)$cluster.id == clus
+  for( clus in unique(rowRanges(object.smoothed)$cluster.id)){
+    ind.clus <- rowRanges(object.smoothed)$cluster.id == clus
     if( any(!is.na(cluster.id.2[ind.clus])) ){
       if( all(!is.na(cluster.id.2[ind.clus])) ){
         cluster.id.2[ind.clus] <- paste(clus, "_", 1, sep="")
@@ -105,11 +105,11 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
       }
     }
   }
-  rowData(object.smoothed)$cluster.id.2 <- cluster.id.2
+  rowRanges(object.smoothed)$cluster.id.2 <- cluster.id.2
 
-  ind.ov <- findOverlaps(rowData(object), rowData(object.smoothed))
-  rowData(object)$cluster.id.2 <- rep(NA, nrow(object))
-  rowData(object)$cluster.id.2[ind.ov@queryHits] <- rowData(object.smoothed)$cluster.id.2[ind.ov@subjectHits]
+  ind.ov <- findOverlaps(rowRanges(object), rowRanges(object.smoothed))
+  rowRanges(object)$cluster.id.2 <- rep(NA, nrow(object))
+  rowRanges(object)$cluster.id.2[ind.ov@queryHits] <- rowRanges(object.smoothed)$cluster.id.2[ind.ov@subjectHits]
 
   # extremes.cpg: data frame with minimum and maximum smoothed methylation value per CpG site
   extremes.cpg <- data.frame(min = apply(methLevel(object.smoothed), 1, min, na.rm=TRUE),
@@ -123,20 +123,20 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
   # - number of covered CpG sites (by at least one sample) in respective region (no.all.cpg)
   cov.region.attr <- data.frame(
                        min.meth = tapply(extremes.cpg$max,
-                         rowData(object.smoothed)$cluster.id.2,
+                         rowRanges(object.smoothed)$cluster.id.2,
                          min),
                        max.meth = tapply(extremes.cpg$max,
-                         rowData(object.smoothed)$cluster.id.2,
+                         rowRanges(object.smoothed)$cluster.id.2,
                          max),
-                       no.cov.cpg = as.integer(table(rowData(object.smoothed)$cluster.id.2)))
-  rownames(cov.region.attr) <- levels(as.factor(rowData(object.smoothed)$cluster.id.2))
+                       no.cov.cpg = as.integer(table(rowRanges(object.smoothed)$cluster.id.2)))
+  rownames(cov.region.attr) <- levels(as.factor(rowRanges(object.smoothed)$cluster.id.2))
   cluster.id <- character(length=nrow(cov.region.attr))
   no.all.cpg <- integer(length=nrow(cov.region.attr))
   for(i in seq(along=rownames(cov.region.attr))) {
     cov.reg <- rownames(cov.region.attr)[i]
-    ind.cov.reg <- which(rowData(object.smoothed)$cluster.id.2 == cov.reg)
-    cluster.id[i] <- rowData(object.smoothed)$cluster.id[ ind.cov.reg[1] ]
-    ind.reg <- which(rowData(object.smoothed)$cluster.id == cluster.id[i])
+    ind.cov.reg <- which(rowRanges(object.smoothed)$cluster.id.2 == cov.reg)
+    cluster.id[i] <- rowRanges(object.smoothed)$cluster.id[ ind.cov.reg[1] ]
+    ind.reg <- which(rowRanges(object.smoothed)$cluster.id == cluster.id[i])
     no.all.cpg[i] <- length(ind.reg)
   }
   cov.region.attr$cluster.id <- cluster.id
@@ -218,14 +218,14 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
     }
     cluster <- possible.clusters[s,]
 
-    ind.region <- which(is.element(rowData(object)$cluster.id, cluster$cluster.id))
+    ind.region <- which(is.element(rowRanges(object)$cluster.id, cluster$cluster.id))
     object.region <- object[ind.region,]
     no.cpgs.region <- cluster$no.all.cpg
     no.cpgs <- round(cpg.perc * no.cpgs.region)
     no.cpgs.cov.region <- cluster$no.cov.cpg
     start.cpgs <- sample(1 : (no.cpgs.cov.region - no.cpgs + 1), 1)
     end.cpgs <- start.cpgs + no.cpgs - 1
-    ind.cpgs <- which(is.element(rowData(object.region)$cluster.id.2, rownames(cluster)))[start.cpgs : end.cpgs]
+    ind.cpgs <- which(is.element(rowRanges(object.region)$cluster.id.2, rownames(cluster)))[start.cpgs : end.cpgs]
     object.dmr <- object.region[ind.cpgs,]
     totalReads <- totalReads(object.dmr)[, ind.samples]
     methReads <- methReads(object.dmr)[, ind.samples]
@@ -264,8 +264,8 @@ simulateDMRs <- function(object, ind.samples, regions, dmr.attr, h=80, mc.cores=
 
     methReads.all.new[ind.region[ind.cpgs], ind.samples] <- methReads.new
 
-    rowData(object.dmr)$meth.diff <- meth.diff
-    diff.meth.cpgs <- c(diff.meth.cpgs, rowData(object.dmr))
+    rowRanges(object.dmr)$meth.diff <- meth.diff
+    diff.meth.cpgs <- c(diff.meth.cpgs, rowRanges(object.dmr))
 
     ## test on complete spatial randomness of CpG sites within region / DMR:
 
